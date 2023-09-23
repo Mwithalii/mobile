@@ -7,7 +7,7 @@ window=Tk()
 window.title("Sign Up")
 window.geometry("925x500+300+200")
 window.resizable(False, False)
-window.config(bg="#262626")
+window.config(bg="white")
 
 
 def signup():
@@ -52,8 +52,8 @@ img_path = os.path.join("images", "sign_up.png")
 img = PhotoImage(file=img_path)
 Label(window, image=img, bg="white").place(x=50, y=90)
 
-frame = Frame(window, width=400, height=400, bg="white")
-frame.place(x=480, y=50)
+frame = Frame(window, width=500, height=500, bg="white")
+frame.place(x=400, y=15)
 
 
 heading = Label(frame, text="Sign Up", font=("Arial", 20, "bold"), bg="white", fg="#57a1f8")
@@ -69,12 +69,12 @@ def on_leave(e):
         user.insert(0, "Username")
 
 user = Entry(frame, font=("Arial", 15), bg="white", fg="black", width=25, border=0)
-user.place(x=30, y=80)
+user.place(x=30, y=40)
 user.insert(0, "Username")
 user.bind("<FocusIn>", on_enter)
 user.bind("<FocusOut>", on_leave)
 
-Frame(frame, width=295, height=2, bg="black").place(x=25, y=107)
+Frame(frame, width=295, height=2, bg="black").place(x=25, y=70)
 
 # Create a password input
 def on_enter(e):
@@ -110,12 +110,46 @@ confirm_code.bind("<FocusOut>", on_leave)
 
 Frame(frame, width=295, height=2, bg="black").place(x=25, y=247)
 
+# Create a email input
+def on_enter(e):
+    email.delete(0, "end")
+
+def on_leave(e):
+    name=user.get()
+    if name == "":
+        email.insert(0, "Email")
+
+email = Entry(frame, font=("Arial", 15), bg="white", fg="black", width=25, border=0)
+email.place(x=30, y=290)
+email.insert(0, "Email")
+email.bind("<FocusIn>", on_enter)
+email.bind("<FocusOut>", on_leave)
+
+Frame(frame, width=295, height=2, bg="black").place(x=25, y=317)
+
+# Create a phone number input
+def on_enter(e):
+    phone.delete(0, "end")
+
+def on_leave(e):
+    name=user.get()
+    if name == "":
+        phone.insert(0, "Phone Number")
+
+phone = Entry(frame, font=("Arial", 15), bg="white", fg="black", width=25, border=0)
+phone.place(x=30, y=360)
+phone.insert(0, "Phone Number")
+phone.bind("<FocusIn>", on_enter)
+phone.bind("<FocusOut>", on_leave)
+
+
+
 #button
-Button(frame, text="Sign Up", font=("Arial", 15, "bold"), bg="#57a1f8", fg="white",width=23, border=0, command=signup).place(x=35, y=280)
-Label(frame, text="Already have an account?", font=("Arial", 10), bg="white", fg="black").place(x=90, y=340)
+Button(frame, text="Sign Up", font=("Arial", 15, "bold"), bg="#57a1f8", fg="white",width=23, border=0, command=signup).place(x=35, y=400)
+Label(frame, text="Already have an account?", font=("Arial", 10), bg="white", fg="black").place(x=90, y=417)
 
 signin=Button(frame, text="Sign In", font=("Arial", 10, "bold"), bg="white", fg="#57a1f8", border=0, cursor="hand2", command=sign)
-signin.place(x=250, y=340)
+signin.place(x=250, y=417)
 
 
 window.mainloop()
