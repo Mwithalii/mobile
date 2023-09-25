@@ -10,9 +10,37 @@ root.geometry("925x500+300+200")
 root.resizable(False, False)
 root.config(bg="#262626")
 
+
+# Initialize streak count
+streak_count = 0
+
+# Check if the streak file exists and load the streak count
+if os.path.isfile('streak.txt'):
+    with open('streak.txt', 'r') as file:
+        streak_count = int(file.read())
+    
+# Function to update the streak count and display it
+def update_streak():
+    global streak_count
+    streak_count += 1
+    #streak_label.config(text=f"Streak: {streak_count} days")
+
+# Function to save the streak count to a file
+def save_streak():
+    with open('streak.txt', 'w') as file:
+        file.write(str(streak_count))
+
+
+def wrapper_function():
+    signin()
+    to_do()
+    update_streak()
+    save_streak()
+
 def to_do():
     root.destroy()
     import to_do
+    #import combined
 
 def signin():
     username = user.get()
@@ -93,7 +121,7 @@ code.bind("<FocusOut>", on_leave)
 Frame(frame, width=295, height=2, bg="black").place(x=25, y=177)
 
 #singin button and signup option
-Button(frame, text="Sign In", font=("Arial", 12, "bold"), bg="#57a1f8", fg="white", border=0, width=29, pady=7, command=signin and to_do).place(x=30, y=204)
+Button(frame, text="Sign In", font=("Arial", 12, "bold"), bg="#57a1f8", fg="white", border=0, width=29, pady=7, command=wrapper_function).place(x=30, y=204)
 label=Label(frame, text="Don't have an account?", fg="black", bg="white", font=("Arial", 9, "bold"))
 label.place(x=75, y=270)
 
