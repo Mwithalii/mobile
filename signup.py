@@ -107,12 +107,14 @@ Frame(frame, width=295, height=2, bg="black").place(x=25, y=75)
 
 def on_enter(e):
     code.delete(0, "end")
+    code.config(show="*") 
 
 
 def on_leave(e):
     name = user.get()
     if name == "":
         code.insert(0, "Password")
+        code.config(show="*") 
 
 
 code = Entry(frame, font=("Arial", 15), bg="white",
@@ -129,12 +131,14 @@ Frame(frame, width=295, height=2, bg="black").place(x=25, y=145)
 
 def on_enter(e):
     confirm_code.delete(0, "end")
+    confirm_code.config(show="*") 
 
 
 def on_leave(e):
     name = user.get()
     if name == "":
         confirm_code.insert(0, "Confirm Password")
+        confirm_code.config(show="*") 
 
 
 confirm_code = Entry(frame, font=("Arial", 15), bg="white",

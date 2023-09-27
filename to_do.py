@@ -15,7 +15,7 @@ load_dotenv()
 api_key_path = os.getenv("API_KEY")
 
 root = Tk()
-root.title("TO DO List")
+root.title("Convertify")
 root.geometry("400x650+400+100")
 root.resizable(False, False)
 
@@ -169,7 +169,16 @@ def stop_notifications():
 
 # Function to celebrate
 def celebrate():
-    import combined
+    root.destroy()
+    import animate
+
+def withdraw_streaks():
+    try:
+        root.destroy()
+        import to_airtime
+        print("success")
+    except Exception as e:
+        print("Error", f"An error occurred: {str(e)}")
 
 # icon
 icon_path = os.path.join("images", "task.png")
@@ -192,7 +201,7 @@ note_img = PhotoImage(file=note_img_path)
 Label(root, image=note_img, bg='#32405b').place(x=340, y=25)
 
 # heading
-heading = Label(root, text="TO DO List", font=(
+heading = Label(root, text="Convertify", font=(
     "Arial", 20, "bold"), bg="#32405b", fg="white")
 heading.place(x=130, y=20)
 
@@ -201,16 +210,21 @@ streak_label = Label(
     root, text=f"Streaks🔥: {streak_count} days", font=("Arial", 16))
 streak_label.pack(pady=10)
 
+#withdrawing streaks
+withdraw = Button(root, text="Convert streaks to airtime?", font=("Arial", 10, "bold"),
+                 fg="#57a1f8", border=0, cursor="hand2", command=withdraw_streaks)
+withdraw.place(x=100, y=125)
+
 # Create a frame to contain the buttons
 button_frame = Frame(root)
-button_frame.pack(pady=20)
+button_frame.pack(pady=30)
 
 # Create a button to start scheduling notifications
-start_button = Button(button_frame, text="Start Notifications", command=start_notifications)
+start_button = Button(button_frame, text="Start Notification", font=("Arial", 10, "bold") , command=start_notifications)
 start_button.pack(side=LEFT, padx=10)
 
 # Create a button to stop notifications
-stop_button = Button(button_frame, text="Stop Notifications", command=stop_notifications)
+stop_button = Button(button_frame, text="Stop Notifications",font=("Arial", 10, "bold"), command=stop_notifications)
 stop_button.pack(side=LEFT, padx=10)
 
 # Time interval (in seconds) between notifications (e.g., 10 seconds)
@@ -221,22 +235,22 @@ notification_message = ""
 stop_notifications = False
 
 # Main frame
-frame = Frame(root, width=400, height=50, bg="white")
-frame.place(x=0, y=200)
+frame = Frame(root, width=400, height=30, bg="white")
+frame.place(x=0, y=220)
 
 
 # Create a task input
 task = StringVar()
-task_entry = Entry(frame, width=18, font=("Arial", 20), bd=0)
+task_entry = Entry(frame, width=18, font=("Arial", 15), bd=0)
 task_entry.place(x=10, y=7)
 
 # Create a add button
-button = Button(frame, text="Add", font=("Arial", 19, "bold"),
+button = Button(frame, text="Add", font=("Arial", 15, "bold"),
                 bg="#32405b", fg="white", bd=0, command=addTask)
 button.place(x=340, y=0)
 
 # Create a list frame
-frame1 = Frame(root, bd=3, width=700, height=280, bg="#32405b")
+frame1 = Frame(root, bd=3, width=700, height=230, bg="#32405b")
 frame1.pack(pady=(70, 0))
 
 # Create a list box

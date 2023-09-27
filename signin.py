@@ -106,11 +106,13 @@ Frame(frame, width=295, height=2, bg="black").place(x=25, y=107)
 # Create a password input
 def on_enter(e):
     code.delete(0, "end")
+    code.config(show="*") 
 
 def on_leave(e):
     name=user.get()
     if name == "":
         code.insert(0, "Password")
+        code.config(show="*") 
 
 code=Entry(frame, width=25, fg="black", font=("Arial", 12, "bold"), bg="white", border=0)
 code.place(x=30, y=150)

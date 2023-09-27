@@ -1,59 +1,113 @@
-import tkinter as tk
-import os
+from tkinter import *
 import africastalking
 import dotenv
 from dotenv import load_dotenv
+import os
+from tkinter import messagebox
+from tkinter import simpledialog
 
 load_dotenv()
 api_key_path = os.getenv("API_KEY")
 
-
-#initialize africastalking
-africastalking.initialize(
-    username='BADS',
-    api_key=api_key_path
-)
-
-# Function to convert streak points into airtime
-def convert_to_airtime():
+def get_recipient_phone_number():
     try:
-        # Read streak points from the file
-        with open('streak.txt', 'r') as file:
-            streak_points = int(file.read())
-        
-        # Calculate the amount of airtime to redeem (e.g., 1 point = 1 KES)
-        airtime_amount = streak_points  # Adjust this as needed
-        
-        # Use Africa's Talking API to send airtime to the user's phone number
-        airtime = africastalking.Airtime
-        response = airtime.send(phone_number, airtime_amount, "KES")
-        
-        if 'errorMessage' in response:
-            result_label.config(text=f"Failed to send airtime: {response['errorMessage']}")
-        else:
-            result_label.config(text="Airtime sent successfully!")
-    
+        with open('datasheet.txt', 'r') as file:
+            data = file.read()
+            data_dict = eval(data)
+            return data_dict.get('phone', None)
     except Exception as e:
-        result_label.config(text=f"An error occurred: {str(e)}")
+        print(f"Error reading datasheet.txt: {str(e)}")
+        return None
 
-# Create the main tkinter window
-root = tk.Tk()
-root.title("Streaks to Airtime Converter")
-root.geometry("400x200")
+def read_streaks_from_file():
+    try:
+        with open('streak.txt', 'r+') as file:
+            streaks = int(file.readline())
+            return streaks
+    except FileNotFoundError:
+        return None
 
-# Create a label to display instructions
-instructions_label = tk.Label(root, text="Click 'Convert' to redeem your streak points for airtime.")
-instructions_label.pack(pady=10)
+def update_streaks_file(new_streaks):
+    try:
+        with open('streak.txt', 'w') as file:
+            file.write(str(new_streaks))
+    except Exception as e:
+        print(f"Error updating streaks in streak.txt: {str(e)}")
 
-# Create a button to initiate the conversion
-convert_button = tk.Button(root, text="Convert", command=convert_to_airtime)
-convert_button.pack(pady=10)
+def convert_points_or_amount(value, from_unit, to_unit):
+    # Set the conversion rates (1 point = 1 dollars)
+    # Set the conversion rates (1 point = 1 ksh)
+    point_to_amount_rate = 1
+    amount_to_point_rate = 1
 
-# Create a label to display the conversion result
-result_label = tk.Label(root, text="")
-result_label.pack()
+    # Initialize the result variable
+    result = None
 
-# Phone number (replace with the user's phone number)
-phone_number = "+254792281598"
+    # Check the input units and perform the appropriate conversion
+    if from_unit == 'points' and to_unit == 'amount':
+        result = value * point_to_amount_rate
+    elif from_unit == 'amount' and to_unit == 'points':
+        result = value * amount_to_point_rate
+    else:
+        # If the units are invalid or the input value is not a number, return an error dictionary
+        return {
+            'status': False,
+            'statusCode': 400,
+            'message': 'Units are invalid or the input value is not a number'
+        }
 
-root.mainloop()
+    # Return the result rounded to two decimal places
+    return round(result, 2)
+
+def convert_and_display(points_to_convert):
+    if points_to_convert is not None:
+        result = convert_points_or_amount(points_to_convert, 'points', 'amount')
+        messagebox.showinfo("Conversion Result", f"{points_to_convert} points is equivalent to KES {result:.2f}")
+        return result
+    else:
+        messagebox.showerror("File Not Found", "The 'streak.txt' file was not found.")
+
+class AIRTIME:
+    def __init__(self):
+        # Set your app credentials
+        self.username = "BADS"
+        self.api_key = api_key_path
+
+        # Initialize the SDK
+        africastalking.initialize(self.username, self.api_key)
+
+        # Get the airtime service
+        self.airtime = africastalking.Airtime
+
+    def send(self, amount):
+        # Set phone_number in international format
+        phone_number = get_recipient_phone_number()
+
+        # Set The 3-Letter ISO currency code
+        currency_code = "KES"
+
+        try:
+            # That's it, hit send and we'll take care of the rest
+            responses = self.airtime.send(phone_number=phone_number, amount=amount, currency_code=currency_code)
+            print(responses)
+        except Exception as e:
+            print("Encountered an error while sending airtime: %s" % str(e))
+
+if __name__ == '__main__':
+    streaks = read_streaks_from_file()
+    if streaks is not None:
+        points_to_convert_str = simpledialog.askstring("Input", "1point = KES 1.00 \n Enter the number of points to convert:")
+        if points_to_convert_str:
+            points_to_convert = int(points_to_convert_str)
+            if points_to_convert >= 10 and points_to_convert <= streaks:
+                new_streaks = streaks - points_to_convert  # Subtract points from streaks
+                update_streaks_file(new_streaks)  # Update streaks in the file
+                conversion_result = convert_and_display(points_to_convert)
+                if conversion_result is not None:
+                    AIRTIME().send(conversion_result)
+            else:
+                messagebox.showerror("Invalid Points", "Points to convert must be above 5 but less than or equal to your number of streaks.")
+        else:
+            messagebox.showerror("Invalid Input", "Please enter a valid number of points to convert.")
+    else:
+        messagebox.showerror("File Not Found", "The 'streak.txt' file was not found.")
