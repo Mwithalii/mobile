@@ -1,5 +1,7 @@
 .env
+.vscode/
 tasklist.txt
+mobile/
 streak.txt
 datasheet.txt
 ```
