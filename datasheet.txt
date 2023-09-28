@@ -1,1 +1,1 @@
-{'Dennis': '1234', 'email': 'minai@gmail.com', 'phone': '+254792281598', 'Minai': '12345'}
+{'Michael': '1234', 'email': 'michael@gmail.com', 'phone': '+254712992489'}

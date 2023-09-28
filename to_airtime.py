@@ -96,17 +96,17 @@ class AIRTIME:
 if __name__ == '__main__':
     streaks = read_streaks_from_file()
     if streaks is not None:
-        points_to_convert_str = simpledialog.askstring("Input", "1point = KES 1.00 \n Enter the number of points to convert:")
+        points_to_convert_str = simpledialog.askstring("Input", "Enter the number of points to convert:")
         if points_to_convert_str:
             points_to_convert = int(points_to_convert_str)
-            if points_to_convert >= 10 and points_to_convert <= streaks:
+            if points_to_convert >= 5 and points_to_convert <= streaks:
                 new_streaks = streaks - points_to_convert  # Subtract points from streaks
                 update_streaks_file(new_streaks)  # Update streaks in the file
                 conversion_result = convert_and_display(points_to_convert)
                 if conversion_result is not None:
                     AIRTIME().send(conversion_result)
             else:
-                messagebox.showerror("Invalid Points", "Points to convert must be above 5 but less than or equal to your number of streaks.")
+                messagebox.showerror("Invalid Points", "Points to convert must be between 10 and the number of streaks.")
         else:
             messagebox.showerror("Invalid Input", "Please enter a valid number of points to convert.")
     else:

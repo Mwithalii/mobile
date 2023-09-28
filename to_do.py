@@ -10,6 +10,10 @@ import winsound
 import africastalking
 import dotenv
 from dotenv import load_dotenv
+import openai
+
+# Set your OpenAI API key here
+openai.api_key = "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"
 
 load_dotenv()
 api_key_path = os.getenv("API_KEY")
@@ -78,7 +82,7 @@ if os.path.isfile('streak.txt'):
 # Function to send a notification and SMS
 def send_notification():
     if not stop_notifications:
-        messagebox.showinfo("Notification", notification_message)
+        messagebox.showinfo("Notification", gen_notification_message)
         play_notification_sound()
         send_sms_notification()
         # Schedule the next notification
@@ -97,6 +101,7 @@ def play_notification_sound():
 
 
 def send_sms_notification():
+    global gen_notification_message
     try:
         # Replace with your Africa's Talking API credentials
 
@@ -114,7 +119,7 @@ def send_sms_notification():
 
         if recipient_phone_number:
             # Define the SMS message
-            sms_message = f"Notification: {notification_message}"
+            sms_message = f"Notification: {gen_notification_message}"
 
             # Send the SMS
             response = sms.send(sms_message, [recipient_phone_number])
@@ -137,11 +142,40 @@ def get_recipient_phone_number():
     except Exception as e:
         print(f"Error reading datasheet.txt: {str(e)}")
         return None
-
+###################
 # Function to start scheduling notifications
-
-
 def start_notifications():
+    global stop_notifications
+    global notification_message
+    global notification_interval
+    global gen_notification_message
+
+    notification_message = simpledialog.askstring(
+        "Notification Message", "Enter your notification message:")
+    
+    if notification_message:
+        # Prompt the user for the notification interval in seconds
+        notification_interval = simpledialog.askinteger(
+            "Notification Interval", "Enter notification interval (in seconds):")
+        
+    if notification_message:
+            # Generate a notification message using OpenAI's GPT-3 model
+            response = openai.Completion.create(
+            engine="davinci",
+            prompt=f"Please notify the user about the latest updates on '{notification_message}'.",
+            max_tokens=50  # Adjust the token limit as needed
+            )
+            gen_notification_message = response.choices[0].text
+
+            # Send the notification (you can customize this part)
+            #send_notification(notification_message)
+
+            if notification_interval:
+                stop_notifications = False
+                send_notification()
+
+
+""" def start_notifications():
     global stop_notifications
     global notification_message
     global notification_interval
@@ -157,7 +191,7 @@ def start_notifications():
 
         if notification_interval:
             stop_notifications = False
-            send_notification()
+            send_notification() """
 
 # Function to stop notifications
 
