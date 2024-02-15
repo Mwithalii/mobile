@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 import openai
 
 # Set your OpenAI API key here
-openai.api_key = "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"
+openai.api_key = ""
 
 load_dotenv()
 api_key_path = os.getenv("API_KEY")
